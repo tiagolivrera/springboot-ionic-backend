@@ -18,7 +18,7 @@ public class CategoriaResource {
     private CategoriaService service;
 
     @RequestMapping(value = "/{id}", method = RequestMethod.GET)
-    public ResponseEntity<?> find(@PathVariable Integer id) {
+    public ResponseEntity<?> find(@PathVariable Integer id) { // id passado via endpoint, usa @PathVariable
         Categoria obj = service.find(id);
         return ResponseEntity.ok().body(obj);
     }
