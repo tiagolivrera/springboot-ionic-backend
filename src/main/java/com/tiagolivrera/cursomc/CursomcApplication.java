@@ -34,22 +34,9 @@ public class CursomcApplication implements CommandLineRunner {
 		Produto p2 = new Produto(null, "Impressora", 800.00);
 		Produto p3 = new Produto(null, "Mouse", 80.00);
 
-		// Prestar atenção nas relações
-		// Necessário adicionar produtos nas categorias e categorias aos produtos
-		categoriaRepository.saveAll(Arrays.asList(cat1, cat2));
-		produtoRepository.saveAll(Arrays.asList(p1, p2, p3));
-
-		categoriaRepository.flush();
-		produtoRepository.flush();
-
 		cat1.getProdutos().addAll(Arrays.asList(p1, p2, p3));
-		cat2.getProdutos().add(p2);
+		cat2.getProdutos().addAll(Arrays.asList(p2));
 
-		p1.getCategorias().add(cat1);
-		p2.getCategorias().addAll(Arrays.asList(cat1, cat2));
-		p3.getCategorias().add(cat1);
-
-		// commit nas alterações
 		categoriaRepository.saveAll(Arrays.asList(cat1, cat2));
 		produtoRepository.saveAll(Arrays.asList(p1, p2, p3));
 	}
