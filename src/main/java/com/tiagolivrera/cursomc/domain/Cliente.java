@@ -21,7 +21,7 @@ import com.tiagolivrera.cursomc.domain.enums.TipoCliente;
 public class Cliente implements Serializable {
 
     public static final long serialVersionUID = 1L;
-    
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
@@ -34,11 +34,16 @@ public class Cliente implements Serializable {
     @OneToMany(mappedBy = "cliente")
     private List<Endereco> enderecos = new ArrayList<>();
 
-    // No diagrama: classe so possui um atributo, entao pode implementar como uma colecao simples -- Telefone é uma entidade fraca
-    // set: utilizado quando nao ha repeticao de elementos. pesquisa mais rapida comparado a list, mas insercao mais lenta
+    // No diagrama: classe so possui um atributo, entao pode implementar como uma
+    // colecao simples -- Telefone é uma entidade fraca
+    // set: utilizado quando nao ha repeticao de elementos. pesquisa mais rapida
+    // comparado a list, mas insercao mais lenta
     @ElementCollection
-    @CollectionTable(name = "TELEFONE") // Mapeando uma colecao como uma tabela 
+    @CollectionTable(name = "TELEFONE") // Mapeando uma colecao como uma tabela
     private Set<String> telefones = new HashSet<>();
+
+    @OneToMany(mappedBy = "cliente")
+    private List<Pedido> pedidos = new ArrayList<>();
 
     public Cliente(Integer id, String nome, String email, String cpfOuCnpj, TipoCliente tipo) {
         this.id = id;
@@ -105,6 +110,14 @@ public class Cliente implements Serializable {
 
     public void setTelefones(Set<String> telefones) {
         this.telefones = telefones;
+    }
+
+    public List<Pedido> getPedidos() {
+        return pedidos;
+    }
+
+    public void setPedidos(List<Pedido> pedidos) {
+        this.pedidos = pedidos;
     }
 
     @Override
