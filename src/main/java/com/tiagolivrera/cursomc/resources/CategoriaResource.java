@@ -5,6 +5,7 @@ import com.tiagolivrera.cursomc.services.CategoriaService;
 
 import java.net.URI;
 
+import org.apache.catalina.connector.Response;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -22,7 +23,7 @@ public class CategoriaResource {
     private CategoriaService service;
 
     @RequestMapping(value = "/{id}", method = RequestMethod.GET)
-    public ResponseEntity<?> find(@PathVariable Integer id) { // id passado via endpoint, usa @PathVariable
+    public ResponseEntity<Categoria> find(@PathVariable Integer id) { // id passado via endpoint, usa @PathVariable
         Categoria obj = service.find(id);
         return ResponseEntity.ok().body(obj);
     }
@@ -33,5 +34,12 @@ public class CategoriaResource {
         URI uri = ServletUriComponentsBuilder.fromCurrentRequest()
                 .path("/{id}").buildAndExpand(obj.getId()).toUri(); // criando uma nova url com o id do objeto inserido
         return ResponseEntity.created(uri).build(); // retorna a url com o codigo 201 (created) -- insercao de dado
+    }
+
+    @RequestMapping(value = "/{id}", method = RequestMethod.PUT)
+    public ResponseEntity<Void> update(@RequestBody Categoria obj, @PathVariable Integer id) {
+        obj.setId(id);
+        obj = service.update(obj);
+        return ResponseEntity.noContent().build();
     }
 }

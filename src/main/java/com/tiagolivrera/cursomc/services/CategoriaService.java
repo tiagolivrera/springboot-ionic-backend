@@ -26,4 +26,9 @@ public class CategoriaService {
         return repository.save(obj); // se id for diferente de null, save() vai tratar o obj como uma atualizacao, e
                                      // nao uma insercao
     }
+
+    public Categoria update(Categoria obj) {
+        find(obj.getId()); // verifica se o obj existe, caso contrario lanca uma excecao
+        return repository.save(obj);
+    }
 }
