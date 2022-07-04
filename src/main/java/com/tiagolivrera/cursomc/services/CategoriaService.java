@@ -4,9 +4,11 @@ import java.util.Optional;
 
 import com.tiagolivrera.cursomc.domain.Categoria;
 import com.tiagolivrera.cursomc.repositories.CategoriaRepository;
+import com.tiagolivrera.cursomc.services.exceptions.DataIntegrityException;
 import com.tiagolivrera.cursomc.services.exceptions.ObjectNotFoundException;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -30,5 +32,16 @@ public class CategoriaService {
     public Categoria update(Categoria obj) {
         find(obj.getId()); // verifica se o obj existe, caso contrario lanca uma excecao
         return repository.save(obj);
+    }
+
+    public void delete(Integer id) {
+        find(id);
+        try {
+            repository.deleteById(id);
+        } catch (DataIntegrityViolationException e) { // caso tente deletar uma categoria para a qual existe produtos, é
+                                                      // lançada a exceção DataIntegrityViolationException
+            throw new DataIntegrityException("Não é possível excluir uma categoria que possui produtos");
+
+        }
     }
 }
