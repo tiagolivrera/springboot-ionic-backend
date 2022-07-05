@@ -1,11 +1,13 @@
 package com.tiagolivrera.cursomc.resources;
 
 import com.tiagolivrera.cursomc.domain.Categoria;
+import com.tiagolivrera.cursomc.dto.CategoriaDTO;
 import com.tiagolivrera.cursomc.services.CategoriaService;
 
 import java.net.URI;
+import java.util.List;
+import java.util.stream.Collectors;
 
-import org.apache.catalina.connector.Response;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -48,5 +50,15 @@ public class CategoriaResource {
     public ResponseEntity<Void> delete(@PathVariable Integer id) {
         service.delete(id);
         return ResponseEntity.noContent().build();
+    }
+
+    @RequestMapping(method = RequestMethod.GET)
+    public ResponseEntity<List<CategoriaDTO>> findAll() {
+        List<Categoria> list = service.findAll();
+        List<CategoriaDTO> listDTO = list.stream().map(obj -> new CategoriaDTO(obj)).collect(Collectors.toList());
+        // stream() : navegando na lista
+        // stream().map() : mapeia todos os objetos Categoria para CategoriaDTO e depois
+        // converte novamente para lista
+        return ResponseEntity.ok().body(listDTO);
     }
 }
