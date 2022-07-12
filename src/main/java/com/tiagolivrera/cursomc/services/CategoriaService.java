@@ -10,6 +10,9 @@ import com.tiagolivrera.cursomc.services.exceptions.ObjectNotFoundException;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort.Direction;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -48,5 +51,12 @@ public class CategoriaService {
 
     public List<Categoria> findAll() {
         return repository.findAll();
+    }
+
+    // Paginacao: limita a quantidade de resultados entregues ao usuario -- util
+    // para uma grande quantidade de dados
+    public Page<Categoria> findPage(Integer page, Integer linesPerPage, String orderBy, String direction) {
+        PageRequest pageRequest = PageRequest.of(page, linesPerPage, Direction.valueOf(direction), orderBy);
+        return repository.findAll(pageRequest);
     }
 }
