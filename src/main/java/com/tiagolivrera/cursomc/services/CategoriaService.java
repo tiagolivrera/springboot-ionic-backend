@@ -35,8 +35,9 @@ public class CategoriaService {
     }
 
     public Categoria update(Categoria obj) {
-        find(obj.getId()); // verifica se o obj existe, caso contrario lanca uma excecao
-        return repository.save(obj);
+        Categoria newObj = find(obj.getId()); // verifica se o obj existe, caso contrario lanca uma excecao
+        updateData(newObj, obj);
+        return repository.save(newObj);
     }
 
     public void delete(Integer id) {
@@ -46,7 +47,6 @@ public class CategoriaService {
         } catch (DataIntegrityViolationException e) { // caso tente deletar uma categoria para a qual existe produtos, é
                                                       // lançada a exceção DataIntegrityViolationException
             throw new DataIntegrityException("Não é possível excluir uma categoria que possui produtos");
-
         }
     }
 
@@ -63,5 +63,9 @@ public class CategoriaService {
 
     public Categoria fromDTO(CategoriaDTO objDTO) {
         return new Categoria(objDTO.getId(), objDTO.getNome());
+    }
+
+    private void updateData(Categoria newObj, Categoria obj) {
+        newObj.setNome(obj.getNome());
     }
 }
