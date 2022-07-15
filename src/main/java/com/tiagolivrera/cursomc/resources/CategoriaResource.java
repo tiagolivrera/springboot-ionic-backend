@@ -8,6 +8,8 @@ import java.net.URI;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import javax.validation.Valid;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
@@ -33,8 +35,10 @@ public class CategoriaResource {
     }
 
     @RequestMapping(method = RequestMethod.POST)
-    public ResponseEntity<Void> insert(@RequestBody Categoria obj) { // @RequestBody -- converte de JSON para Java
-                                                                     // automaticamente
+    public ResponseEntity<Void> insert(@Valid @RequestBody CategoriaDTO objDTO) { // @RequestBody -- converte de JSON
+                                                                                  // para Java automaticamente
+        // @Valid -- testa a validacao descrita em CategoriaDTO
+        Categoria obj = service.fromDTO(objDTO);
         obj = service.insert(obj);
         URI uri = ServletUriComponentsBuilder.fromCurrentRequest()
                 .path("/{id}").buildAndExpand(obj.getId()).toUri(); // criando uma nova url com o id do objeto inserido
@@ -42,7 +46,8 @@ public class CategoriaResource {
     }
 
     @RequestMapping(value = "/{id}", method = RequestMethod.PUT)
-    public ResponseEntity<Void> update(@RequestBody Categoria obj, @PathVariable Integer id) {
+    public ResponseEntity<Void> update(@Valid @RequestBody CategoriaDTO objDTO, @PathVariable Integer id) {
+        Categoria obj = service.fromDTO(objDTO);
         obj.setId(id);
         obj = service.update(obj);
         return ResponseEntity.noContent().build();
@@ -72,7 +77,8 @@ public class CategoriaResource {
             @RequestParam(value = "orderBy", defaultValue = "nome") String orderBy,
             @RequestParam(value = "direction", defaultValue = "ASC") String direction) {
         Page<Categoria> list = service.findPage(page, linesPerPage, orderBy, direction);
-        Page<CategoriaDTO> listDTO = list.map(obj -> new CategoriaDTO(obj)); // Page ja é java 8 compliance, nao precisa de stream()
+        Page<CategoriaDTO> listDTO = list.map(obj -> new CategoriaDTO(obj)); // Page ja é java 8 compliance, nao precisa
+                                                                             // de stream()
         return ResponseEntity.ok().body(listDTO);
     }
 }
