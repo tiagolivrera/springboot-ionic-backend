@@ -11,17 +11,19 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 public class ItemPedido implements Serializable {
 
     public static final long serialVersionUID = 1L;
-    
+
     @JsonIgnore
     @EmbeddedId
-    private ItemPedidoPK id = new ItemPedidoPK(); // ItemPedidoPK estabelece a relacao entre as classes Pedido e Produto (so interessa ao JPA)
+    private ItemPedidoPK id = new ItemPedidoPK(); // ItemPedidoPK estabelece a relacao entre as classes Pedido e Produto
+                                                  // (so interessa ao JPA)
 
     private Double desconto;
     private Integer quantidade;
     private Double preco;
-    
+
     public ItemPedido(Pedido pedido, Produto produto, Double desconto, Integer quantidade, Double preco) {
-        id.setPedido(pedido); // nao passa para o programador o ItemPedidoPK, mas pede o Pedido e o Produto relacionados
+        id.setPedido(pedido); // nao passa para o programador o ItemPedidoPK, mas pede o Pedido e o Produto
+                              // relacionados
         id.setProduto(produto);
         this.desconto = desconto;
         this.quantidade = quantidade;
@@ -29,6 +31,10 @@ public class ItemPedido implements Serializable {
     }
 
     public ItemPedido() {
+    }
+
+    public double getSubTotal() {
+        return (preco - desconto) * quantidade;
     }
 
     @JsonIgnore
