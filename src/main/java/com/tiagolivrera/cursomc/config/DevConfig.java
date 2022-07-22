@@ -9,6 +9,8 @@ import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 
 import com.tiagolivrera.cursomc.services.DBService;
+import com.tiagolivrera.cursomc.services.EmailService;
+import com.tiagolivrera.cursomc.services.SmtpEmailService;
 
 @Component
 @Profile("dev")
@@ -29,7 +31,12 @@ public class DevConfig {
         
         dbService.instantiateTestDatabase();
         return true;
-    }    
+    }
+    
+    @Bean
+    public EmailService emailService() {
+        return new SmtpEmailService();
+    }
 }
 
 /*
