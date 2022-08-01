@@ -10,6 +10,7 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort.Direction;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -26,6 +27,9 @@ import com.tiagolivrera.cursomc.services.exceptions.ObjectNotFoundException;
 
 @Service
 public class ClienteService {
+
+    @Autowired
+    private BCryptPasswordEncoder pe;
 
     @Autowired
     private ClienteRepository clienteRepository;
@@ -73,7 +77,7 @@ public class ClienteService {
     }
 
     public Cliente fromDTO(ClienteDTO objDTO) {
-        return new Cliente(objDTO.getId(), objDTO.getNome(), objDTO.getEmail(), null, null);
+        return new Cliente(objDTO.getId(), objDTO.getNome(), objDTO.getEmail(), null, null, null);
     }
 
     private void updateData(Cliente newObj, Cliente obj) {
@@ -83,7 +87,7 @@ public class ClienteService {
 
     public Cliente fromDTO(@Valid ClienteNewDTO objDTO) {
         Cliente cli = new Cliente(null, objDTO.getNome(), objDTO.getEmail(), objDTO.getCpfOuCnpj(),
-                TipoCliente.toEnum(objDTO.getTipo()));
+                TipoCliente.toEnum(objDTO.getTipo()), pe.encode(objDTO.getSenha())); // passa o encode da senha
         Cidade cid = new Cidade(objDTO.getCidadeID(), null, null);
         Endereco end = new Endereco(null, objDTO.getLogradouro(), objDTO.getNumero(), objDTO.getComplemento(),
                 objDTO.getBairro(), objDTO.getCep(), cli, cid);
