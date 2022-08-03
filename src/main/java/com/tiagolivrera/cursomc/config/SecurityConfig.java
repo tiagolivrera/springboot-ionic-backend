@@ -19,6 +19,7 @@ import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import com.tiagolivrera.cursomc.security.JWTAuthenticationFilter;
+import com.tiagolivrera.cursomc.security.JWTAuthorizationFilter;
 import com.tiagolivrera.cursomc.security.JWTUtil;
 
 @Configuration
@@ -63,6 +64,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         // stateless -- garante que o backend nao vai criar uma secao de usuario
         http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
         http.addFilter(new JWTAuthenticationFilter(authenticationManager(), jwtUtil));
+        http.addFilter(new JWTAuthorizationFilter(authenticationManager(), jwtUtil, userDetailsService));
     }
 
     @Override
