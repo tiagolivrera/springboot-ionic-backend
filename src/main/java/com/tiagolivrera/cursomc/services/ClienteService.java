@@ -17,11 +17,14 @@ import org.springframework.transaction.annotation.Transactional;
 import com.tiagolivrera.cursomc.domain.Cidade;
 import com.tiagolivrera.cursomc.domain.Cliente;
 import com.tiagolivrera.cursomc.domain.Endereco;
+import com.tiagolivrera.cursomc.domain.enums.Perfil;
 import com.tiagolivrera.cursomc.domain.enums.TipoCliente;
 import com.tiagolivrera.cursomc.dto.ClienteDTO;
 import com.tiagolivrera.cursomc.dto.ClienteNewDTO;
 import com.tiagolivrera.cursomc.repositories.ClienteRepository;
 import com.tiagolivrera.cursomc.repositories.EnderecoRepository;
+import com.tiagolivrera.cursomc.security.UserSS;
+import com.tiagolivrera.cursomc.services.exceptions.AuthorizationException;
 import com.tiagolivrera.cursomc.services.exceptions.DataIntegrityException;
 import com.tiagolivrera.cursomc.services.exceptions.ObjectNotFoundException;
 
@@ -38,6 +41,13 @@ public class ClienteService {
     private EnderecoRepository enderecoRepository;
 
     public Cliente find(Integer id) {
+
+        UserSS user = UserService.authenticated();
+        // o usuario normal logado so pode acessar a si mesmo. apenas o ADMIN pode ler todos os clientes
+        if (user == null || !user.hasRole(Perfil.ADMIN) && !id.equals(user.getId())) {
+            throw new AuthorizationException("Acesso negado");
+        }
+
         Optional<Cliente> obj = clienteRepository.findById(id);
         return obj.orElseThrow(() -> new ObjectNotFoundException(
                 "Objeto não encontrado! Id: " + id + ", Tipo: " + Cliente.class.getName()));
