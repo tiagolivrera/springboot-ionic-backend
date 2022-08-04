@@ -48,7 +48,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     };
 
     private static final String[] PUBLIC_MATCHERS_POST = {
-        "/clientes/**" // O cliente pode se cadastrar no sistema
+        "/clientes/**", // O cliente pode se cadastrar no sistema
+        "/auth/forgot/**"
     };
 
     @Override
