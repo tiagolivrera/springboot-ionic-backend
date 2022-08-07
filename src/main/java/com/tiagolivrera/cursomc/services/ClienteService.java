@@ -1,5 +1,6 @@
 package com.tiagolivrera.cursomc.services;
 
+import java.net.URI;
 import java.util.List;
 import java.util.Optional;
 
@@ -13,6 +14,7 @@ import org.springframework.data.domain.Sort.Direction;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.tiagolivrera.cursomc.domain.Cidade;
 import com.tiagolivrera.cursomc.domain.Cliente;
@@ -30,6 +32,9 @@ import com.tiagolivrera.cursomc.services.exceptions.ObjectNotFoundException;
 
 @Service
 public class ClienteService {
+
+    @Autowired
+    private S3Service s3service;
 
     @Autowired
     private BCryptPasswordEncoder pe;
@@ -110,5 +115,9 @@ public class ClienteService {
             cli.getTelefones().add(objDTO.getTelefone3());
         }
         return cli;
+    }
+
+    public URI uploadProfilePicture(MultipartFile multipartFile) {
+        return s3service.uploadFile(multipartFile);
     }
 }
