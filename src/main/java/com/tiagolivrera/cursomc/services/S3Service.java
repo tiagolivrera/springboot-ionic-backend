@@ -27,9 +27,9 @@ public class S3Service {
     @Value("${s3.bucket}")
     private String bucketName;
 
-    public URI uploadFile(MultipartFile multipartFile) { 
+    public URI uploadFile(MultipartFile multipartFile) {
         try {
-            String fileName = multipartFile.getOriginalFilename();
+            String fileName = multipartFile.getOriginalFilename(); // extrai o nome do arquivo enviado
             InputStream is = multipartFile.getInputStream();
             String contentType = multipartFile.getContentType();
             return uploadFile(is, fileName, contentType);
@@ -37,7 +37,7 @@ public class S3Service {
             throw new RuntimeException("Erro de IO:" + e.getMessage());
         }
     }
-    
+
     public URI uploadFile(InputStream is, String fileName, String contentType) {
         try {
             ObjectMetadata meta = new ObjectMetadata();
