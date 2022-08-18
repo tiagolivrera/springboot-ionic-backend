@@ -31,6 +31,7 @@ public class AuthResource {
         UserSS user = UserService.authenticated();
         String token = jwtUtil.generateToken(user.getUsername());
         response.addHeader("Authorization", "Bearer " + token);
+        response.addHeader("access-control-expose-headers", "Authorization"); // liberando o acesso ao cabeçalho personalizado (problema de Cors)
         return ResponseEntity.noContent().build();
     }
 
