@@ -51,7 +51,8 @@ public class Cliente implements Serializable {
     @CollectionTable(name = "TELEFONE") // Mapeando uma colecao como uma tabela
     private Set<String> telefones = new HashSet<>();
 
-    // FetchType.EAGER -- garante que a busca pelos clientes ira ser feita junto com os perfis
+    // FetchType.EAGER -- garante que a busca pelos clientes ira ser feita junto com
+    // os perfis
     @ElementCollection(fetch = FetchType.EAGER)
     @CollectionTable(name = "PERFIS")
     private Set<Integer> perfis = new HashSet<>();
@@ -59,8 +60,6 @@ public class Cliente implements Serializable {
     @JsonIgnore
     @OneToMany(mappedBy = "cliente")
     private List<Pedido> pedidos = new ArrayList<>();
-
-    private String imageUrl;
 
     public Cliente(Integer id, String nome, String email, String cpfOuCnpj, TipoCliente tipo, String senha) {
         this.id = id;
@@ -74,14 +73,6 @@ public class Cliente implements Serializable {
 
     public Cliente() {
         addPerfil(Perfil.CLIENTE);
-    }
-
-    public String getImageUrl() {
-        return imageUrl;
-    }
-
-    public void setImageUrl(String imageUrl) {
-        this.imageUrl = imageUrl;
     }
 
     public Integer getId() {
