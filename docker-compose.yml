@@ -1,0 +1,58 @@
+version: '3.1'
+
+#networks:
+#    etl_dev:
+#        external: true
+
+networks: 
+  etl_dev:
+    driver: bridge
+
+services:
+  localstack:
+    container_name: localstack
+    image: localstack/localstack:latest
+    environment:
+      - AWS_ACCESS_KEY_ID=AKIAIOSFODNN7EXAMPLE
+      - AWS_SECRET_ACCESS_KEY=wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY
+      - AWS_DEFAULT_REGION=us-east-1
+      - AWS_DEFAULT_OUTPUT=json
+      - EDGE_PORT=
+      - SERVICES=s3,sqs
+      - DATA_DIR=/tmp/localstack/data
+      - DOCKER_HOST=unix:///var/run/docker.sock
+    ports:
+      # - "4572:4572" # old s3 port
+      - "4566:4566" # s3
+      - "4576:4576" # sqs
+    volumes:
+      - ./localstack/data:/tmp/localstack/data
+
+  postgres:
+    container_name: postgres
+    image: postgres:latest
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=admin
+      - POSTGRES_DB=curso_spring
+    volumes:
+       - ./postgres-data:/var/lib/postgresql/data
+          # copy the sql script to create tables
+       - ./sql/create_tables.sql:/docker-entrypoint-initdb.d/create_tables.sql
+    ports:
+      - "5432:5432"
+    networks:
+      - etl_dev
+    restart: unless-stopped
+
+# $ docker network create etl_dev            (cria a rede utilizada pelo postgres)
+# $ docker compose up -d                     (cria o volume)
+# $ docker compose exec localstack bash      (acessa o volume)
+# dentro do localstack:
+# $ aws --endpoint-url=http://127.0.0.1:4566 s3api create-bucket --bucket spring-department-store
+# $ aws --endpoint-url=http://127.0.0.1:4566 s3api put-bucket-acl --bucket spring-department-store --acl public-read
+
+# Baseado em: https://gusiol.medium.com/desenvolvimento-na-aws-s3-e-sqs-sem-custos-com-localstack-f525d015ca48
+#             https://github.com/khezen/compose-postgres/blob/master/docker-compose.yml
+#             https://levelup.gitconnected.com/creating-and-filling-a-postgres-db-with-docker-compose-e1607f6f882f
+#             https://stackoverflow.com/questions/52587359/error-service-xxx-uses-an-undefined-network-xxx 
